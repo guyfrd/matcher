@@ -5,7 +5,7 @@ public class MatchFounded extends Message {
     public String key;
     public long lineOffset;
     public long charOffset;
-    public String msg;
+    String msg;
 
     public MatchFounded(String key, long lineOffset, long charOffset, String msg) {
         super(msg);

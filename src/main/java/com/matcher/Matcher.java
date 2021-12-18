@@ -24,7 +24,6 @@ public class Matcher implements Runnable{
         long chunkCharOffset = this.slice.charsOffset;
         long chunkRowsOffset = this.slice.rowsOffset;
 
-        long startTime = System.nanoTime();
         for (String line: this.slice.data) {
                 Collection<Emit> emits = trie.parseText(line);
                 for (Emit e : emits) {
@@ -38,11 +37,6 @@ public class Matcher implements Runnable{
                 chunkCharOffset += line.length() + 1;
 
             }
-
-        long endTime = System.nanoTime();
-        long totalTime = endTime - startTime;
-//        System.out.println("matcher: num lines:" + this.slice.data.size() + "time" + totalTime / 1_000_000 + "ms");
-
     }
 
 }
