@@ -17,7 +17,7 @@ public class MatchFounded extends Message {
 
     @Override
     public void printMsg() {
-        System.out.format("[lineOffset: %d charOffset: %d]", this.lineOffset, this.charOffset);
+        System.out.format("[lineOffset: %d charOffset: %d],", this.lineOffset, this.charOffset);
     }
 }
 
