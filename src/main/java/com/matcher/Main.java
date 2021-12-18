@@ -23,7 +23,7 @@ public class Main {
         return keys;
     }
     public static Properties readConfig() {
-        File configFile = new File("src/main/.matcher_config");
+        File configFile = new File("src/main/matcher.config");
         FileReader reader = null;
         Properties props = null;
         try {
