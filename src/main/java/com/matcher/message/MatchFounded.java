@@ -2,10 +2,10 @@ package com.matcher.message;
 
 public class MatchFounded extends Message {
 
-    String key;
-    long lineOffset;
-    long charOffset;
-    String msg;
+    public String key;
+    public long lineOffset;
+    public long charOffset;
+    public String msg;
 
     public MatchFounded(String key, long lineOffset, long charOffset, String msg) {
         super(msg);
@@ -15,21 +15,9 @@ public class MatchFounded extends Message {
         this.msg = msg;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public long getLineOffset() {
-        return lineOffset;
-    }
-
-    public long getCharOffset() {
-        return charOffset;
-    }
-
     @Override
     public void printMsg() {
-        System.out.format("%s [lineOffset: %d charOffset: %d]\n", this.key, this.lineOffset, this.charOffset);
+        System.out.format("[lineOffset: %d charOffset: %d]", this.lineOffset, this.charOffset);
     }
 }
 

@@ -54,10 +54,10 @@ public class MatcherTest {
         for (int i = 0; i < exceptedMatches; i++) {
             try {
                 Message msg = queue.take();
-                String key = ((MatchFounded)msg).getKey();
+                String key = ((MatchFounded)msg).key;
 
-                Assert.assertEquals(matchesMap.get(key).getCharOffset(),((MatchFounded) msg).getCharOffset());
-                Assert.assertEquals(matchesMap.get(key).getLineOffset(),((MatchFounded) msg).getLineOffset());
+                Assert.assertEquals(matchesMap.get(key).charOffset,((MatchFounded) msg).charOffset);
+                Assert.assertEquals(matchesMap.get(key).lineOffset,((MatchFounded) msg).lineOffset);
 
                 ((MatchFounded)msg).printMsg();
             } catch (InterruptedException e) {

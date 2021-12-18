@@ -25,9 +25,12 @@ public class AggregatorTest {
             aggrQueue.put(m);
         }
 
-        List<MatchFounded> resMatchFoundeds = agg.getMatches();
+        for (int i = 0; i < input.size(); i++) {
+            System.out.println("i " + i + "-" + input.get(i).key);
+            Assert.assertEquals(agg.getMatches(input.get(i).key).get(0), input.get(i));
+        }
+
         aggrQueue.put(new FileDone("done"));
 
-        Assert.assertEquals(resMatchFoundeds, input);
     }
 }

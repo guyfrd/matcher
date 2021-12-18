@@ -4,28 +4,28 @@ import com.matcher.message.FileDone;
 import com.matcher.message.MatchFounded;
 import com.matcher.message.Message;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 
 public class Aggregator extends Thread {
     BlockingQueue<Message> chunkQueue;
-
-    List<MatchFounded> matchFoundeds;
+    Map<String, List<MatchFounded>> matchesMap;
 
     public Aggregator(BlockingQueue msgQueue) {
         this.chunkQueue = msgQueue;
-        this.matchFoundeds = new ArrayList<MatchFounded>();
+        this.matchesMap = new LinkedHashMap<String, List<MatchFounded>>();
     }
 
     public void printMatches() {
-        for (MatchFounded m: this.matchFoundeds) {
-            m.printMsg();
-        }
+        this.matchesMap.forEach((key, keyMatches) -> {
+            System.out.print(key + "->");
+            keyMatches.forEach((match) -> match.printMsg());
+            System.out.println();
+        });
     }
 
-    public List<MatchFounded> getMatches() {
-        return matchFoundeds;
+    public List<MatchFounded> getMatches(String key) {
+        return this.matchesMap.get(key);
     }
 
     @Override
@@ -34,11 +34,15 @@ public class Aggregator extends Thread {
             try {
                 Message msg = chunkQueue.take();
                 if (msg instanceof FileDone) {
-//                    System.out.println("agg! ChunkDone " + ((ChunkDone) msg).chunkId);
                     break;
                 } else if (msg instanceof MatchFounded) {
-//                    System.out.println("agg! Match");
-                    this.matchFoundeds.add((MatchFounded) msg);
+                    MatchFounded match = (MatchFounded)msg;
+                    if (this.matchesMap.containsKey(match.key) == false) {
+                        this.matchesMap.put(match.key, new ArrayList<MatchFounded>());
+                    }
+                    this.matchesMap.get(match.key).add(match);
+
+//                    this.matchFoundeds.add((MatchFounded) msg);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
