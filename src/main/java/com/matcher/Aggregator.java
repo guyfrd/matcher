@@ -41,8 +41,6 @@ public class Aggregator extends Thread {
                         this.matchesMap.put(match.key, new ArrayList<MatchFounded>());
                     }
                     this.matchesMap.get(match.key).add(match);
-
-//                    this.matchFoundeds.add((MatchFounded) msg);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
