@@ -1,8 +1,8 @@
-package com.matcherString;
+package com.matcher;
 
-import com.matcherString.message.FileDone;
-import com.matcherString.message.MatchFounded;
-import com.matcherString.message.Message;
+import com.matcher.message.FileDone;
+import com.matcher.message.MatchFounded;
+import com.matcher.message.Message;
 
 import java.util.ArrayList;
 import java.util.List;

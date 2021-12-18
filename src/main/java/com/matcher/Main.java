@@ -1,8 +1,7 @@
-package com.matcherString;
+package com.matcher;
 
-import com.matcherString.message.FileDone;
-import com.matcherString.message.Message;
-import org.ahocorasick.trie.Emit;
+import com.matcher.message.FileDone;
+import com.matcher.message.Message;
 import org.ahocorasick.trie.Trie;
 
 import java.net.*;
@@ -23,32 +22,43 @@ public class Main {
         }
         return keys;
     }
-    public static void doThing(Emit e) {
-
-//        e.toString().split(":");
-        System.out.println(e.getKeyword() + e.getStart() + " " + e.getEnd());
+    public static Properties readConfig() {
+        File configFile = new File("src/main/.matcher_config");
+        FileReader reader = null;
+        Properties props = null;
+        try {
+            reader = new FileReader(configFile);
+            props = new Properties();
+            props.load(reader);
+            reader.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return props;
     }
 
-
-
     public static void main(String[] args) throws IOException, InterruptedException {
-        int numMatchers = 26;
-        int numLinesPerMatcher = 1000;
+        Properties prop = readConfig();
+        int numMatchers = Integer.parseInt(prop.getProperty("MAX_MATCHERS"));
+        int numLinesPerMatcher = Integer.parseInt(prop.getProperty("MAX_LINE_PER_MATCHER"));
         int queueCap = 3000;
+
         long fileCharsOffset = 0;
         long sliceCharsOffset = 0;
         long rowsOffset = 0;
         String line = null;
         Slice slice = null;
         int currRowCount = 0;
-        final List<String> keys = readSearchKeys("src/main/java/com/matcherString/keys");
+        final List<String> keys = readSearchKeys(prop.getProperty("KEY_FILE"));
         Trie trie = Trie.builder().onlyWholeWords().addKeywords(keys).build();
 
         ExecutorService matcherPool = Executors.newFixedThreadPool(numMatchers);
         BlockingQueue<Message> aggrQueue = new ArrayBlockingQueue<Message>(queueCap);
         List<String> sliceData = new ArrayList<String>();
         Aggregator agg = new Aggregator(aggrQueue);
-        URL bigFileUrl = new URL("http://norvig.com/big.txt");
+        URL bigFileUrl = new URL(prop.getProperty("URL"));
         BufferedReader data = new BufferedReader(new InputStreamReader(bigFileUrl.openStream()));
 
         agg.start();

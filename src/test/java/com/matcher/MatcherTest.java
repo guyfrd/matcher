@@ -1,7 +1,7 @@
-package com.matcherString;
+package com.matcher;
 
-import com.matcherString.message.MatchFounded;
-import com.matcherString.message.Message;
+import com.matcher.message.MatchFounded;
+import com.matcher.message.Message;
 import org.ahocorasick.trie.Trie;
 import org.junit.Assert;
 import org.junit.Test;

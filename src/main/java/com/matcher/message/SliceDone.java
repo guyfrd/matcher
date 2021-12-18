@@ -1,4 +1,4 @@
-package com.matcherString.message;
+package com.matcher.message;
 
 import java.util.UUID;
 

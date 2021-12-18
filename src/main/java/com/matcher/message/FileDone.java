@@ -1,4 +1,4 @@
-package com.matcherString.message;
+package com.matcher.message;
 
 public class FileDone extends Message{
     String Msg;

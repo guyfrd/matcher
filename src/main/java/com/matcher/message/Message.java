@@ -1,4 +1,4 @@
-package com.matcherString.message;
+package com.matcher.message;
 
 public abstract class Message {
     public String msg;

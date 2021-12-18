@@ -1,0 +1,4 @@
+URL=http://norvig.com/big.txt
+KEY_FILE=src/main/java/com/matcher/keys
+MAX_MATCHERS=26
+MAX_LINE_PER_MATCHER=1000

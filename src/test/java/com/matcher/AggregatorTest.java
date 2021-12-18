@@ -1,6 +1,6 @@
-package com.matcherString;
+package com.matcher;
 
-import com.matcherString.message.*;
+import com.matcher.message.*;
 
 import org.junit.Assert;
 import org.junit.Test;

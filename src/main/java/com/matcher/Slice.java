@@ -1,4 +1,4 @@
-package com.matcherString;
+package com.matcher;
 
 import java.util.List;
 import java.util.UUID;
