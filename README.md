@@ -22,7 +22,8 @@ The keys are set in a text file in src/main/java/com/matcher/keys and include th
 
 ### Case-sensistiv 
 By default, matcher is case-sensitive, for ignoring the case, set the filed CASE_SENSITIVE to *false*. 
-### aggregator
+
+### Aggregator
 aggregate all the matcher results, map them by the search-key and print the results.
 
 ### Output
