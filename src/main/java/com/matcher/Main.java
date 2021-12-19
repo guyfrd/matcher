@@ -39,7 +39,7 @@ public class Main {
         return props;
     }
 
-    public static BufferedReader createReader (Properties prop) throws IOException {
+    public static BufferedReader createReader (Properties prop) {
         BufferedReader data = null;
         try {
             if (prop.getProperty("INPUT_SOURCE").equals("FS")) {
@@ -50,12 +50,14 @@ public class Main {
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return data;
     }
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) {
         Properties prop = readConfig();
         int numMatchers = Integer.parseInt(prop.getProperty("MAX_MATCHERS"));
         int numLinesPerMatcher = Integer.parseInt(prop.getProperty("MAX_LINE_PER_MATCHER"));
@@ -67,7 +69,12 @@ public class Main {
         String line = null;
         Slice slice = null;
         int currRowCount = 0;
-        final List<String> keys = readSearchKeys(prop.getProperty("KEY_FILE"));
+        List<String> keys = null;
+        try {
+            keys = readSearchKeys(prop.getProperty("KEY_FILE"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         Trie trie = Trie.builder().onlyWholeWords().addKeywords(keys).build();
 
         ExecutorService matcherPool = Executors.newFixedThreadPool(numMatchers);
@@ -77,34 +84,42 @@ public class Main {
         BufferedReader data = createReader(prop);
         agg.start();
 
-        sliceData.add(data.readLine());
-        currRowCount++;
-
-        long startTime = System.nanoTime();
-        while ((line = data.readLine()) != null) {
-            if (currRowCount % numLinesPerMatcher == 0) {
-                slice = new Slice(sliceData, rowsOffset, fileCharsOffset);
-                matcherPool.execute(new Matcher(slice, aggrQueue, trie));
-                sliceData = new ArrayList<String>();
-                fileCharsOffset += sliceCharsOffset;
-                rowsOffset += numLinesPerMatcher;
-            }
+        try {
+            sliceData.add(data.readLine());
             currRowCount++;
-            sliceCharsOffset += line.length();
-            sliceData.add(line);
+
+            long startTime = System.nanoTime();
+            while ((line = data.readLine()) != null) {
+                if (currRowCount % numLinesPerMatcher == 0) {
+                    slice = new Slice(sliceData, rowsOffset, fileCharsOffset);
+                    matcherPool.execute(new Matcher(slice, aggrQueue, trie));
+                    sliceData = new ArrayList<String>();
+                    fileCharsOffset += sliceCharsOffset;
+                    rowsOffset += numLinesPerMatcher;
+                }
+                currRowCount++;
+                sliceCharsOffset += line.length();
+                sliceData.add(line);
+            }
+            long endTime = System.nanoTime();
+            long totalTime = endTime - startTime;
+
+            slice = new Slice(sliceData, rowsOffset, fileCharsOffset);
+            matcherPool.execute(new Matcher(slice, aggrQueue, trie));
+            matcherPool.shutdown();
+            try {
+                matcherPool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            data.close();
+            aggrQueue.put(new FileDone("file done"));
+            agg.printMatches();
+            System.out.println("total search time: " + totalTime / 1_000_000 + "ms");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        long endTime   = System.nanoTime();
-        long totalTime = endTime - startTime;
-
-        slice = new Slice(sliceData, rowsOffset, fileCharsOffset);
-        matcherPool.execute(new Matcher(slice, aggrQueue, trie));
-        matcherPool.shutdown();
-        matcherPool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-
-        data.close();
-        aggrQueue.put(new FileDone("file done"));
-        agg.printMatches();
-        System.out.println("total search time: " + totalTime / 1_000_000 + "ms");
     }
 }
 
