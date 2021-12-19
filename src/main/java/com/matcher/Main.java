@@ -105,11 +105,8 @@ public class Main {
             matcherPool.execute(new Matcher(slice, aggrQueue, trie));
 
             matcherPool.shutdown();
-            try {
-                matcherPool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
+            matcherPool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 
             data.close();
             aggrQueue.put(new FileDone());
