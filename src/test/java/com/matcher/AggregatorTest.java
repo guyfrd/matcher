@@ -1,6 +1,6 @@
 package com.matcher;
 
-import com.matcher.message.*;
+import com.matcher.events.*;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -12,7 +12,7 @@ import java.util.concurrent.BlockingQueue;
 public class AggregatorTest {
     @Test
     public void testAggregatorMatch() throws InterruptedException {
-        BlockingQueue<Message> aggrQueue = new ArrayBlockingQueue<Message>(100);
+        BlockingQueue<Event> aggrQueue = new ArrayBlockingQueue<Event>(100);
         Aggregator agg = new Aggregator(aggrQueue);
         agg.start();
 
@@ -30,7 +30,7 @@ public class AggregatorTest {
             Assert.assertEquals(agg.getMatches(input.get(i).key).get(0), input.get(i));
         }
 
-        aggrQueue.put(new FileDone("done"));
+        aggrQueue.put(new FileDone());
 
     }
 }

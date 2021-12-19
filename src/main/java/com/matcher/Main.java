@@ -1,7 +1,7 @@
 package com.matcher;
 
-import com.matcher.message.FileDone;
-import com.matcher.message.Message;
+import com.matcher.events.FileDone;
+import com.matcher.events.Event;
 import org.ahocorasick.trie.Trie;
 
 import java.net.*;
@@ -74,7 +74,7 @@ public class Main {
             trie = Trie.builder().onlyWholeWords().addKeywords(keys).build();
         }
         ExecutorService matcherPool = Executors.newFixedThreadPool(numMatchers);
-        BlockingQueue<Message> aggrQueue = new ArrayBlockingQueue<Message>(queueCap);
+        BlockingQueue<Event> aggrQueue = new ArrayBlockingQueue<Event>(queueCap);
         List<String> sliceData = new ArrayList<String>();
         Aggregator agg = new Aggregator(aggrQueue);
         BufferedReader data = createReader(prop);
@@ -112,7 +112,7 @@ public class Main {
             }
 
             data.close();
-            aggrQueue.put(new FileDone("file done"));
+            aggrQueue.put(new FileDone());
             agg.printMatches();
             System.out.println("total search time: " + totalTime / 1_000_000 + "ms");
         } catch (Exception e) {

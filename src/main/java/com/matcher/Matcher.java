@@ -1,7 +1,7 @@
 package com.matcher;
 
-import com.matcher.message.MatchFounded;
-import com.matcher.message.Message;
+import com.matcher.events.MatchFounded;
+import com.matcher.events.Event;
 import org.ahocorasick.trie.Emit;
 import org.ahocorasick.trie.Trie;
 
@@ -11,10 +11,10 @@ import java.util.concurrent.BlockingQueue;
 public class Matcher implements Runnable{
 
     Slice slice;
-    BlockingQueue<Message> resQueue;
+    BlockingQueue<Event> resQueue;
     Trie trie;
 
-    public Matcher(Slice slice, BlockingQueue<Message> resQueue, Trie trie){
+    public Matcher(Slice slice, BlockingQueue<Event> resQueue, Trie trie){
         this.slice = slice;
         this.resQueue = resQueue;
         this.trie = trie;

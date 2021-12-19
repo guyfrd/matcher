@@ -1,7 +1,7 @@
 package com.matcher;
 
-import com.matcher.message.MatchFounded;
-import com.matcher.message.Message;
+import com.matcher.events.MatchFounded;
+import com.matcher.events.Event;
 import org.ahocorasick.trie.Trie;
 import org.junit.Assert;
 import org.junit.Test;
@@ -47,19 +47,19 @@ public class MatcherTest {
 
         Slice s = new Slice(Arrays.asList(rowData), 0, 0);
 
-        BlockingQueue<Message> queue = new ArrayBlockingQueue<Message>(100);
+        BlockingQueue<Event> queue = new ArrayBlockingQueue<Event>(100);
 
         Matcher newMatcher = new Matcher(s,queue, trie);
         newMatcher.run();
         for (int i = 0; i < exceptedMatches; i++) {
             try {
-                Message msg = queue.take();
+                Event msg = queue.take();
                 String key = ((MatchFounded)msg).key;
 
                 Assert.assertEquals(matchesMap.get(key).charOffset,((MatchFounded) msg).charOffset);
                 Assert.assertEquals(matchesMap.get(key).lineOffset,((MatchFounded) msg).lineOffset);
 
-                ((MatchFounded)msg).printMsg();
+                ((MatchFounded)msg).printMatch();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

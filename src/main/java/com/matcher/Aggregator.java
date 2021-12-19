@@ -1,14 +1,14 @@
 package com.matcher;
 
-import com.matcher.message.FileDone;
-import com.matcher.message.MatchFounded;
-import com.matcher.message.Message;
+import com.matcher.events.FileDone;
+import com.matcher.events.MatchFounded;
+import com.matcher.events.Event;
 
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 
 public class Aggregator extends Thread {
-    BlockingQueue<Message> chunkQueue;
+    BlockingQueue<Event> chunkQueue;
     Map<String, List<MatchFounded>> matchesMap;
 
     public Aggregator(BlockingQueue msgQueue) {
@@ -19,7 +19,7 @@ public class Aggregator extends Thread {
     public void printMatches() {
         this.matchesMap.forEach((key, keyMatches) -> {
             System.out.print(key + "->");
-            keyMatches.forEach((match) -> match.printMsg());
+            keyMatches.forEach((match) -> match.printMatch());
             System.out.println();
         });
     }
@@ -32,7 +32,7 @@ public class Aggregator extends Thread {
     public void run() {
         while (true) {
             try {
-                Message msg = chunkQueue.take();
+                Event msg = chunkQueue.take();
                 if (msg instanceof FileDone) {
                     break;
                 } else if (msg instanceof MatchFounded) {
