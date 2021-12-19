@@ -11,13 +11,13 @@ import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 public class Main {
-    public static List<String> readSearchKeys(String path) throws FileNotFoundException {
+    public static List<String> readSearchKeys(String path) {
         BufferedReader reader = null;
         List<String> keys = null;
         try {
             reader = new BufferedReader(new FileReader(path));
             keys = reader.lines().collect(Collectors.toList());
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return keys;
@@ -31,9 +31,7 @@ public class Main {
             props = new Properties();
             props.load(reader);
             reader.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return props;
@@ -48,9 +46,7 @@ public class Main {
                 URL bigFileUrl = new URL(prop.getProperty("INPUT_PATH"));
                 data = new BufferedReader(new InputStreamReader(bigFileUrl.openStream()));
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -69,12 +65,8 @@ public class Main {
         String line = null;
         Slice slice = null;
         int currRowCount = 0;
-        List<String> keys = null;
-        try {
-            keys = readSearchKeys(prop.getProperty("KEY_FILE"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+
+        List<String> keys = readSearchKeys(prop.getProperty("KEY_FILE"));
         Trie trie = Trie.builder().onlyWholeWords().addKeywords(keys).build();
 
         ExecutorService matcherPool = Executors.newFixedThreadPool(numMatchers);
