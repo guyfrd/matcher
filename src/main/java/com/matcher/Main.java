@@ -39,6 +39,22 @@ public class Main {
         return props;
     }
 
+    public static BufferedReader createReader (Properties prop) throws IOException {
+        BufferedReader data = null;
+        try {
+            if (prop.getProperty("INPUT_SOURCE").equals("FS")) {
+                data = new BufferedReader(new FileReader(prop.getProperty("INPUT_PATH")));
+            } else if (prop.getProperty("INPUT_SOURCE").equals("URL")) {
+                URL bigFileUrl = new URL(prop.getProperty("INPUT_PATH"));
+                data = new BufferedReader(new InputStreamReader(bigFileUrl.openStream()));
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return data;
+    }
+
     public static void main(String[] args) throws IOException, InterruptedException {
         Properties prop = readConfig();
         int numMatchers = Integer.parseInt(prop.getProperty("MAX_MATCHERS"));
@@ -58,9 +74,7 @@ public class Main {
         BlockingQueue<Message> aggrQueue = new ArrayBlockingQueue<Message>(queueCap);
         List<String> sliceData = new ArrayList<String>();
         Aggregator agg = new Aggregator(aggrQueue);
-        URL bigFileUrl = new URL(prop.getProperty("URL"));
-        BufferedReader data = new BufferedReader(new InputStreamReader(bigFileUrl.openStream()));
-
+        BufferedReader data = createReader(prop);
         agg.start();
 
         sliceData.add(data.readLine());
@@ -90,7 +104,7 @@ public class Main {
         data.close();
         aggrQueue.put(new FileDone("file done"));
         agg.printMatches();
-        System.out.println("total search time: " + totalTime / 1_000_000_000 + "sec");
+        System.out.println("total search time: " + totalTime / 1_000_000 + "ms");
     }
 }
 
