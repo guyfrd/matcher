@@ -67,8 +67,12 @@ public class Main {
         int currRowCount = 0;
 
         List<String> keys = readSearchKeys(prop.getProperty("KEY_FILE"));
-        Trie trie = Trie.builder().onlyWholeWords().addKeywords(keys).build();
-
+        Trie trie = null;
+        if (prop.getProperty("CASE_SENSITIVE").equals("false")) {
+            trie = Trie.builder().onlyWholeWords().ignoreCase().addKeywords(keys).build();
+        } else {
+            trie = Trie.builder().onlyWholeWords().addKeywords(keys).build();
+        }
         ExecutorService matcherPool = Executors.newFixedThreadPool(numMatchers);
         BlockingQueue<Message> aggrQueue = new ArrayBlockingQueue<Message>(queueCap);
         List<String> sliceData = new ArrayList<String>();
@@ -96,8 +100,10 @@ public class Main {
             long endTime = System.nanoTime();
             long totalTime = endTime - startTime;
 
+            System.out.println("last slice "+ rowsOffset +"--" +sliceData.size() );
             slice = new Slice(sliceData, rowsOffset, fileCharsOffset);
             matcherPool.execute(new Matcher(slice, aggrQueue, trie));
+
             matcherPool.shutdown();
             try {
                 matcherPool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);

@@ -20,6 +20,9 @@ for setting the number of matchers - set the filed MAX_MATCHERS in matcher.confi
 ### Search Keys
 The keys are set in a text file in src/main/java/com/matcher/keys and include the 50 most common English first names.
 
+### Case-sensistiv 
+By default, matcher is case-sensitive, for ignoring the case, and use low-case only for search, 
+set the filed CASE_SENSITIVE to *false*. 
 ### aggregator
 aggregate all the matcher results, map them by the search-key and print the results.
 
